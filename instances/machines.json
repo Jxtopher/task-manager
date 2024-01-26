@@ -1,0 +1,8 @@
+{
+    "local":{
+        "addr" : ""
+    },
+    "vespa": {
+        "addr": "vespa"
+    }
+}

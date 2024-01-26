@@ -1,0 +1,12 @@
+{
+	"name": "Task-manager",
+	"context": "..",
+	"dockerFile": "Dockerfile",
+	"extensions": [
+		"aaron-bond.better-comments",
+		"alefragnani.bookmarks",
+		"rust-lang.rust-analyzer",
+		"vadimcn.vscode-lldb"
+	],
+	"remoteUser": "user"
+}

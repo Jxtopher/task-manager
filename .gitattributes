@@ -1,0 +1,50 @@
+# Auto detect text files and perform LF normalization
+*               text=auto
+
+# Files should be normalized
+*.cmake         text eol=lf
+*.cpp           text eol=lf
+*.h             text eol=lf
+*.hpp           text eol=lf
+*.json          text eol=lf
+*.py            text eol=lf
+*.sh            text eol=lf
+*.txt           text eol=lf
+*.yml           text eol=lf
+.clang-format   text eol=lf
+.clang-tidy     text eol=lf
+.gitattributes  text eol=lf
+.gitignore      text eol=lf
+Dockerfile      text eol=lf
+LICENSE         text eol=lf
+README          text eol=lf
+
+# Binary
+*.7z        binary
+*.fla       binary
+*.flv       binary
+*.gif       binary
+*.gz        binary
+*.ico       binary
+*.jpeg      binary
+*.jpg       binary
+*.mov       binary
+*.mp3       binary
+*.mp4       binary
+*.png       binary
+*.swf       binary
+*.tar.gz    binary
+*.ttf       binary
+*.zip       binary
+
+# Documents
+*.DOC  diff=astextplain
+*.DOCX diff=astextplain
+*.DOT  diff=astextplain
+*.PDF  diff=astextplain
+*.RTF  diff=astextplain
+*.doc  diff=astextplain
+*.docx diff=astextplain
+*.dot  diff=astextplain
+*.pdf  diff=astextplain
+*.rtf  diff=astextplain

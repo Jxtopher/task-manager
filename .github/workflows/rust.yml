@@ -1,0 +1,55 @@
+name: Rust
+
+on:
+  push:
+    branches: [ "main" ]
+    tags:        
+      - '*'
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Check the formatting
+      run: cargo fmt --check
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+
+
+    - name: Set env RELEASE_VERSION
+      run: |
+        echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+    - name: Install package handler
+      if: startsWith(github.event.ref, 'refs/tags/')
+      run: cargo install cargo-deb
+
+    - name: Set Cargo.toml version
+      if: startsWith(github.event.ref, 'refs/tags/')
+      shell: bash
+      run: |
+        mv Cargo.toml Cargo.toml.orig
+        sed "s/0\\.0\\.0-git/${{env.RELEASE_VERSION}}/" Cargo.toml.orig >Cargo.toml
+        mv Cargo.lock Cargo.lock.orig
+        sed "s/0\\.0\\.0-git/${{env.RELEASE_VERSION}}/" Cargo.lock.orig >Cargo.lock
+
+    - name: Create package
+      if: startsWith(github.event.ref, 'refs/tags/')
+      run: cargo deb
+
+    - name: Publish the release
+      if: startsWith(github.event.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{github.workspace}}/target/debian/*.deb

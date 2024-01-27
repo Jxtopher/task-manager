@@ -1,6 +1,7 @@
 mod rw_file;
 mod splitter;
 
+use chrono::Utc;
 use clap::Parser;
 use env_logger;
 use log::error;
@@ -9,7 +10,6 @@ use std::process::Command;
 use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
-use chrono::Utc;
 
 /// Task manager
 #[derive(Parser, Debug)]
@@ -68,7 +68,6 @@ fn main() -> Result<(), std::io::Error> {
             let task = tasks[0].to_string();
             tasks.remove(0);
             rw_file::write(&args.backlog, &tasks);
-
             thread_pool.push(thread::spawn(|| exec(task)));
         } else {
             has_tasks = false;
@@ -87,5 +86,5 @@ fn main() -> Result<(), std::io::Error> {
         thread::sleep(Duration::from_secs(1));
     }
 
-    return Ok(());
+    Ok(())
 }

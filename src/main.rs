@@ -9,6 +9,7 @@ use std::process::Command;
 use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
+use chrono::Utc;
 
 /// Task manager
 #[derive(Parser, Debug)]
@@ -27,13 +28,14 @@ static MUTEX: Mutex<i32> = Mutex::new(0);
 fn exec(task: String) {
     let mut params = splitter::split(task.to_string());
     let executable = params[0].to_string();
+    let start_time = Utc::now();
     params.remove(0);
 
     match Command::new(executable).args(params).output() {
         Ok(output) => {
             let stdout = String::from_utf8(output.stdout).unwrap();
             let _ = MUTEX.lock();
-            println!("-> {}", task);
+            println!("-> {} {}", start_time.format("%Y-%m-%d %H:%M:%S%.3f%z"), task);
             println!("{}", stdout);
             // output.status
         }
@@ -73,23 +75,16 @@ fn main() -> Result<(), std::io::Error> {
         }
 
         // Visitor
-        let mut be_visited = true;
-        while be_visited {
-            let mut index = 0;
-            while index < thread_pool.len() {
-                if thread_pool[index].is_finished() {
-                    thread_pool.remove(index);
-                    break;
-                }
+        let mut index = 0;
+        while index < thread_pool.len() {
+            if thread_pool[index].is_finished() {
+                thread_pool.remove(index);
+            } else {
                 index += 1;
             }
-
-            if thread_pool.len() < args.jobs {
-                be_visited = false;
-            } else {
-                thread::sleep(Duration::from_secs(1));
-            }
         }
+
+        thread::sleep(Duration::from_secs(1));
     }
 
     return Ok(());

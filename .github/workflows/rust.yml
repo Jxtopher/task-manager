@@ -27,7 +27,7 @@ jobs:
 
     - name: Install package handler
       if: startsWith(github.event.ref, 'refs/tags/')
-      run: rustup update && cargo install cargo-deb
+      run: cargo install cargo-deb
 
     - name: Create package
       if: startsWith(github.event.ref, 'refs/tags/')

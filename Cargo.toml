@@ -1,7 +1,10 @@
 [package]
+description = "Management of heavy task processing in parallel with a quenue depending on CPU/RAM load."
+edition = "2021"
+license = "BSD 3-Clause License"
 name = "taskmanager"
 version = "0.1.0"
-edition = "2021"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,3 +16,13 @@ log = "0.4.20"
 
 [profile.release]
 strip = true
+
+[package.metadata.deb]
+maintainer = "Jxtopher"
+copyright = "2023, Jxtopher"
+depends = "$auto"
+section = "utility"
+priority = "optional"
+assets = [
+    ["target/release/taskmanager", "usr/bin/", "755"],
+]

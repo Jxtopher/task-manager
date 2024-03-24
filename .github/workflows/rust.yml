@@ -22,3 +22,18 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
+
+    - name: Install package handler
+      if: startsWith(github.event.ref, 'refs/tags/')
+      run: rustup update && cargo install cargo-deb
+
+    - name: Create package
+      if: startsWith(github.event.ref, 'refs/tags/')
+      run: cargo deb
+
+    - name: Publish the release
+      if: startsWith(github.event.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ${{github.workspace}}/target/debian/*.deb

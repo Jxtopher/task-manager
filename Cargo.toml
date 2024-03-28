@@ -3,7 +3,7 @@ description = "Management of heavy task processing in parallel with a quenue dep
 edition = "2021"
 license = "BSD 3-Clause License"
 name = "qrun"
-version = "0.1.0"
+version = "0.0.0-git"
 
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

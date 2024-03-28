@@ -1,4 +1,4 @@
-# Task manager
+# Queue run
 
 **Keywords**: backlog, executing tasks
 
@@ -7,5 +7,5 @@ Management of heavy task processing in parallel with a quenue depending on CPU/R
 ## Usage:
 
 ```shell
-./taskmanager -f protein-calculation.bl
+./qrun -f protein-calculation.bl
 ```

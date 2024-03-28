@@ -6,6 +6,7 @@ use clap::Parser;
 use env_logger;
 use log::error;
 use std::fs::metadata;
+use std::path::Path;
 use std::process::Command;
 use std::sync::Mutex;
 use std::thread;
@@ -19,9 +20,13 @@ struct Args {
     #[arg(short, long)]
     backlog: String,
 
-    // Number of parallel jobs
+    /// run N jobs in parallel
     #[arg(short, long, default_value_t = 1)]
     jobs: usize,
+
+    /// Demon mode
+    #[arg(short, long, default_value_t = false)]
+    demon: bool,
 }
 
 static MUTEX: Mutex<i32> = Mutex::new(0);
@@ -51,12 +56,13 @@ fn exec(task: String) {
 
 fn main() -> Result<(), std::io::Error> {
     env_logger::init();
-    let args = Args::parse();
+    let args: Args = Args::parse();
 
+    let mut has_tasks: bool = true;
+    let mut is_locked: bool;
     let mut thread_pool: Vec<thread::JoinHandle<()>> = Vec::new();
-    let mut has_tasks = true;
 
-    while has_tasks || thread_pool.len() > 0 {
+    while args.demon || has_tasks || thread_pool.len() > 0 {
         match metadata(&args.backlog) {
             Ok(_) => (),
             Err(_) => {
@@ -65,19 +71,31 @@ fn main() -> Result<(), std::io::Error> {
             }
         }
 
+        // Verify that the backlog file is not being edited
+        let path = Path::new(&args.backlog);
+        let parent = path.parent().unwrap().to_str().unwrap();
+        let swapfile_filename = path.file_name().unwrap().to_str().unwrap();
+
+        let swapfile = format!("{parent}/.{swapfile_filename}.swp");
+        match metadata(&swapfile) {
+            Ok(_) => is_locked = true,
+            Err(_) => is_locked = false,
+        }
+
+        // Read the backlog
         let mut tasks = rw_file::read(&args.backlog);
 
-        // No more tasks need to be executed in the backlog
-        if tasks.len() != 0 {
+        if tasks.len() == 0 {
+            // No more tasks need to be executed in the backlog
+            has_tasks = false;
+        } else if !is_locked && thread_pool.len() < args.jobs {
             let task = tasks[0].to_string();
             tasks.remove(0);
             rw_file::write(&args.backlog, &tasks);
             thread_pool.push(thread::spawn(|| exec(task)));
-        } else {
-            has_tasks = false;
         }
 
-        // Visitor
+        // Thread visitor
         let mut index = 0;
         while index < thread_pool.len() {
             if thread_pool[index].is_finished() {

@@ -2,7 +2,7 @@
 description = "Management of heavy task processing in parallel with a quenue depending on CPU/RAM load."
 edition = "2021"
 license = "BSD 3-Clause License"
-name = "taskmanager"
+name = "qrun"
 version = "0.1.0"
 
 
@@ -24,5 +24,5 @@ depends = "$auto"
 section = "utility"
 priority = "optional"
 assets = [
-    ["target/release/taskmanager", "usr/bin/", "755"],
+    ["target/release/qrun", "usr/bin/", "755"],
 ]

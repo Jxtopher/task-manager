@@ -29,6 +29,17 @@ jobs:
       if: startsWith(github.event.ref, 'refs/tags/')
       run: cargo install cargo-deb
 
+    - name: Set Cargo.toml version
+      if: startsWith(github.event.ref, 'refs/tags/')
+      shell: bash
+      env:
+        RELEASE_TAG: ${{ github.ref }}
+      run: |
+        mv Cargo.toml Cargo.toml.orig
+        sed "s/0\\.0\\.0-git/${RELEASE_TAG##*\/v}/" Cargo.toml.orig >Cargo.toml
+        mv Cargo.lock Cargo.lock.orig
+        sed "s/0\\.0\\.0-git/${RELEASE_TAG##*\/v}/" Cargo.lock.orig >Cargo.lock
+
     - name: Create package
       if: startsWith(github.event.ref, 'refs/tags/')
       run: cargo deb

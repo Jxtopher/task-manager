@@ -39,7 +39,7 @@ fn exec(task: String) {
     match Command::new(executable).args(params).output() {
         Ok(output) => {
             let stdout = String::from_utf8(output.stdout).unwrap();
-            let _ = MUTEX.lock();
+            let mutex = MUTEX.lock();
             println!(
                 "-> {} {}",
                 start_time.format("%Y-%m-%d %H:%M:%S%.3f%z"),
@@ -47,6 +47,7 @@ fn exec(task: String) {
             );
             println!("{}", stdout);
             // output.status
+            drop(mutex);
         }
         Err(..) => {
             error!("Failed to execute command: {}", task);

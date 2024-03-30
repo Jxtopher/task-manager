@@ -41,9 +41,9 @@ jobs:
         RELEASE_TAG: ${GITHUB_REF#refs/*/}
       run: |
         mv Cargo.toml Cargo.toml.orig
-        sed "s/0\\.0\\.0-git/env.RELEASE_VERSION/" Cargo.toml.orig >Cargo.toml
+        sed "s/0\\.0\\.0-git/${env.RELEASE_VERSION}/" Cargo.toml.orig >Cargo.toml
         mv Cargo.lock Cargo.lock.orig
-        sed "s/0\\.0\\.0-git/env.RELEASE_VERSION/" Cargo.lock.orig >Cargo.lock
+        sed "s/0\\.0\\.0-git/${env.RELEASE_VERSION}/" Cargo.lock.orig >Cargo.lock
 
     - name: Create package
       if: startsWith(github.event.ref, 'refs/tags/')

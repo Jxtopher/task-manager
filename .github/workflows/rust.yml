@@ -33,7 +33,7 @@ jobs:
       if: startsWith(github.event.ref, 'refs/tags/')
       shell: bash
       env:
-        RELEASE_TAG: ${{GITHUB_REF#refs/*/}}
+        RELEASE_TAG: ${GITHUB_REF#refs/*/}
       run: |
         mv Cargo.toml Cargo.toml.orig
         sed "s/0\\.0\\.0-git/${RELEASE_TAG##*\/v}/" Cargo.toml.orig >Cargo.toml

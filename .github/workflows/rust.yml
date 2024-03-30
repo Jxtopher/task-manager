@@ -25,6 +25,11 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
+
+    - name: Set env RELEASE_VERSION
+      run: |
+        echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
     - name: Install package handler
       if: startsWith(github.event.ref, 'refs/tags/')
       run: cargo install cargo-deb
@@ -36,9 +41,9 @@ jobs:
         RELEASE_TAG: ${GITHUB_REF#refs/*/}
       run: |
         mv Cargo.toml Cargo.toml.orig
-        sed "s/0\\.0\\.0-git/${RELEASE_TAG}/" Cargo.toml.orig >Cargo.toml
+        sed "s/0\\.0\\.0-git/env.RELEASE_VERSION/" Cargo.toml.orig >Cargo.toml
         mv Cargo.lock Cargo.lock.orig
-        sed "s/0\\.0\\.0-git/${RELEASE_TAG}/" Cargo.lock.orig >Cargo.lock
+        sed "s/0\\.0\\.0-git/env.RELEASE_VERSION/" Cargo.lock.orig >Cargo.lock
 
     - name: Create package
       if: startsWith(github.event.ref, 'refs/tags/')
